@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
+from uuid import uuid4
+
 # Create your models here.
 class Category(models.Model):
     title = models.CharField(max_length=200)
@@ -82,3 +84,30 @@ class CourseItem(models.Model):
         Course, on_delete=models.PROTECT, related_name='courseitems')
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
+
+
+class Address(models.Model):
+    street = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    district = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    postalcode = models.CharField(max_length=6)
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE)
+
+
+class Cart(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(
+        Cart, on_delete=models.CASCADE, related_name='items')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1)]
+    )
+
+    class Meta:
+        unique_together = [['cart', 'course']]
