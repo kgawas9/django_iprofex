@@ -1,3 +1,4 @@
 db.sqlite3
 iprofex/.env
 logs/
+__pycache__/
