@@ -55,9 +55,9 @@ class CategoryView(APIView):
 
 
 
-
 class CourseView(APIView):
     def get(self, request, id=None):
+        print("its here")
         try:
             if id is not None:
                 query = Course.objects.select_related('category').get(pk=id)
@@ -77,4 +77,26 @@ class CourseView(APIView):
                     'message':'Unable to fetch data from system',
                     'technical_error': str(e)
                 })
+
+
+    def post(self, request):
+        try:
+            serializer = CourseSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            serializer.validated_data
+            serializer.save()
+
+            return Response({
+                'status': status.HTTP_201_CREATED,
+                'message': 'Course successfully added',
+                'data': serializer.data
+            })
+
+        except Exception as e:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Unable to create new record',
+                'technical_error': str(e)
+            })
 
