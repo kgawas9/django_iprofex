@@ -48,6 +48,7 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = [
             'mobile_no', 'birth_date', 'membership', 'user_id'
         ]
+        depth = 1
 
     def create(self, validated_data):
         student = Student(**validated_data, user_id=self.context['user_id'])

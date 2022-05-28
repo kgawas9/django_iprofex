@@ -145,3 +145,12 @@ class StudentView(APIView):
                 'technical_error': str(e)
             })
    
+    def get(self, request):
+        student = Student.objects.get(user_id=request.user.id)
+        print(student)
+        serializer = StudentSerializer(student)
+        return Response({
+                    'status': status.HTTP_200_OK,
+                    'message':'Here we go',
+                    'data': serializer.data
+                })
