@@ -1,3 +1,4 @@
+from urllib import response
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from requests import Response
@@ -6,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Course, Category
-from .serializers import CategorySerializer, CourseSerializer
+from .models import Course, Category, Student
+from .serializers import CategorySerializer, CourseSerializer, StudentSerializer
 
 # Create your views here.
 
@@ -55,9 +56,9 @@ class CategoryView(APIView):
 
 
 
+# Course views
 class CourseView(APIView):
     def get(self, request, id=None):
-        print("its here")
         try:
             if id is not None:
                 query = Course.objects.select_related('category').get(pk=id)
@@ -100,3 +101,47 @@ class CourseView(APIView):
                 'technical_error': str(e)
             })
 
+    def put(self, request, id):
+        try:
+            course = Course.objects.get(pk=id)
+            serializer = CourseSerializer(course, data=request.data)
+
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({
+                'status': status.HTTP_202_ACCEPTED,
+                'message':'Record successfully updated',
+                'data': serializer.data
+            })
+
+        except Exception as e:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Unable to update the record',
+                'technical_error': str(e)
+            })
+
+
+# student view
+class StudentView(APIView):
+    def post(self, request):
+        try:
+            serializer = StudentSerializer(data = request.data, context = {'user_id':self.request.user.id})
+            serializer.is_valid(raise_exception=True)
+
+            serializer.validated_data
+            serializer.save()
+
+            return Response({
+                    'status': status.HTTP_201_CREATED,
+                    'message':'Profile successfully created',
+                    'data': serializer.data
+                })
+        
+        except Exception as e:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message':'Unable to create the profile',
+                'technical_error': str(e)
+            })
+   

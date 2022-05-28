@@ -31,6 +31,7 @@ class Course(models.Model):
     def __str__(self):
         return self.title
     
+
 class Student(models.Model):
     MEMBERSHIP_BRONZE = 'B'
     MEMBERSHIP_SILVER = 'S'
@@ -60,6 +61,7 @@ class Student(models.Model):
     def last_name(self):
         return self.user.last_name
 
+
 class CourseEnrollment(models.Model):
     PAYMENT_STATUS_PENDING = 'P'
     PAYMENT_STATUS_COMPLETE = 'C'
@@ -77,6 +79,7 @@ class CourseEnrollment(models.Model):
 
     def __str__(self):
         return f'{self.student}'
+
 
 class CourseItem(models.Model):
     enrollment = models.ForeignKey(CourseEnrollment, on_delete=models.PROTECT, related_name='items')
