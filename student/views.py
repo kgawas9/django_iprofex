@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Course, Category, Student
-from .serializers import CategorySerializer, CourseSerializer, StudentSerializer
+from .models import Course, Category, Student, Cart
+from .serializers import CartSerializer, CategorySerializer, CourseSerializer, StudentSerializer
 
 # Create your views here.
 
@@ -154,3 +154,43 @@ class StudentView(APIView):
                     'message':'Here we go',
                     'data': serializer.data
                 })
+
+
+class CartView(APIView):
+    def post(self, request):
+        try:
+            serializer = CartSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.validated_data
+
+            serializer.save()
+            return Response({
+                'status': status.HTTP_201_CREATED,
+                'message': 'cart successfully created',
+                'data': serializer.data
+            })
+        except Exception as e:
+            return Response({
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message':'Bad request, unable to create cart',
+                'technical_error': str(e)
+            })
+
+    def get(self, requsest, id):
+        try:
+            cart = Cart.objects.get(pk=id)
+            serializer = CartSerializer(cart)
+
+            return Response({
+                'status': status.HTTP_200_OK,
+                'message': 'Cart found',
+                'data': serializer.data
+            })
+
+        except Exception as e:
+            return Response({
+                'status': status.HTTP_204_NO_CONTENT,
+                'message':'Cart does not exist',
+                'technical_error': str(e)
+            })
+        

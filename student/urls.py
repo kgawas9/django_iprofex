@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CategoryView, CourseView, StudentView
+from .views import CartView, CategoryView, CourseView, StudentView
 
 urlpatterns = [
     path('course-categories/', CategoryView.as_view(), name='course-categories'),
@@ -9,4 +9,7 @@ urlpatterns = [
     path('course-details/<int:id>', CourseView.as_view(), name='course-details-by-id'),
 
     path('student-profile/', StudentView.as_view(), name='student-profile'),
+
+    path('cart/create/', CartView.as_view(), name='create-cart'),
+    path('cart/<uuid:id>/', CartView.as_view(), name='get-cart'),
 ]

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import SerializerMethodField
 from django.db import transaction
 
-from .models import Category, Course, Student
+from .models import Cart, Category, Course, Student
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -54,4 +54,19 @@ class StudentSerializer(serializers.ModelSerializer):
         student = Student(**validated_data, user_id=self.context['user_id'])
         student.save()
         return student
+
+
+# cart serializer
+class CartSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+    class Meta:
+        model = Cart
+        fields = [
+            'id'
+        ]
+
+    def create(self, validated_data):
+        cart = Cart(**validated_data)
+        cart.save()
+        return cart
 
